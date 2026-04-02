@@ -99,38 +99,20 @@ Elimina todos los volúmenes
 docker volume rm $(docker volume ls -q) 
 ```
 
-DOCKER COMPOSER
-CREAR CONTENEDOR CON DISCO COMPARTIDO
-crear archivo docker-compose.yml
-```html
-version: '3.8'
-
-services:
-  sonarqube:
-    image: sonarqube
-    container_name: sonarqube
-    ports:
-      - "9000:9000"
-    volumes:
-      - D:/:/disco-d
-    environment:
-      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
-```
-
 
 PUBLICAR IMAGEN
-Perfecto. Guía desde docker login -u richardcollao:
-
-Login en Docker Hub
-
+Login en Docker Hub, Si tienes 2FA, usa un Access Token como contraseña.
+```html
 docker login -u richardcollao
-Si tienes 2FA, usa un Access Token como contraseña.
+```
 Construir imagen
-
+```html
 docker build -t richardcollao/sonar-app:1.0.0 /home/richard/Docker/SonarProject
+```
 Subir imagen
-
+```html
 docker push richardcollao/sonar-app:1.0.0
+```
 Verificar que existe en Docker Hub
 
 
