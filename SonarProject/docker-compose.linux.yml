@@ -1,0 +1,40 @@
+# Levantar este stack:
+# docker compose -f docker-compose.linux.yml up -d --force-recreate
+
+services:
+  sonarqube:
+    image: sonarqube:latest
+    container_name: sonarqube
+    ports:
+      - "9000:9000"
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_logs:/opt/sonarqube/logs
+    networks:
+      - sonar_net
+
+  app:
+    build:
+      context: .             # raíz del proyecto
+      dockerfile: Dockerfile # Dockerfile raíz (incluye www/ completo)
+    container_name: sonar_app
+    depends_on:
+      - sonarqube
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    volumes:
+    # Importante: Reemplazar /home/richard/www por la ruta local donde tiene sus proyectos antes de iniciar el contenedor.
+      - /home/richard/www:/workspace
+    networks:
+      - sonar_net
+
+networks:
+  sonar_net:
+    driver: bridge
+
+volumes:
+  sonarqube_data:
+  sonarqube_logs:

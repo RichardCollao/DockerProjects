@@ -28,7 +28,7 @@ services:
   # APP  (Node.js + sonar-scanner + Java + git)
   # ─────────────────────────────────────────────
   app:
-    image: richardcollao/sonar-app:1.0.0
+    image: richardcollao/sonar-app:1.0.1
     # build:
     #   context: .             # raíz del proyecto
     #   dockerfile: Dockerfile # Dockerfile raíz (incluye www/ completo)
@@ -41,8 +41,7 @@ services:
       - NODE_ENV=production
       - PORT=3000
     volumes:
-      # IMPORTANTE: cada usuario debe reemplazar /home/richard/www por su ruta que contenga todos los proyectos
-      # por su directorio local antes de levantar el contenedor.
+      # Importante: Reemplazar /home/richard/www por la ruta local donde tiene sus proyectos antes de iniciar el contenedor.
       - /home/richard/www:/workspace
       # Ejemplo ruta en windows
       # - C:\Users\Richard\www:/workspace
