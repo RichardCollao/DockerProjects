@@ -36,15 +36,15 @@ ENV SONAR_SCANNER_OPTS="-server"
 ENV JAVA_HOME="/usr/lib/jvm/java-17-openjdk-amd64"
 
 # ── Dependencias Node.js ─────────────────────────────────────────
-# COPY desde www/ porque el contexto es la raíz del proyecto.
+# COPY desde sonar_project/ porque el contexto es la raíz del proyecto.
 # Se copia scripts/ antes de npm ci porque el postinstall
 # ejecuta scripts/copy-vendor.js (copia assets de node_modules).
-COPY www/package*.json ./
-COPY www/scripts/ ./scripts/
+COPY sonar_project/package*.json ./
+COPY sonar_project/scripts/ ./scripts/
 RUN npm ci --omit=dev && npm cache clean --force
 
 # ── Código de la app ─────────────────────────────────────────────
-COPY www/ .
+COPY sonar_project/ .
 
 # Carpetas de escritura en runtime
 # uploads debe existir pero vacío en la imagen final
