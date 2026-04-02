@@ -1,0 +1,26 @@
+# Comandos utiles:
+#   Iniciar:   docker compose up -d --force-recreate
+#   Detener:   docker compose down
+#   Ver logs:  docker compose logs -f ngrok
+services:
+  ngrok:
+    # Imagen oficial de ngrok - version 3 (Debian)  Mas info: https://hub.docker.com/r/ngrok/ngrok
+    image: ngrok/ngrok:3-debian
+    environment:
+      # Token de autenticacion de tu cuenta ngrok. Obtenlo en: https://dashboard.ngrok.com/get-started/your-authtoken
+      - NGROK_AUTHTOKEN=3ARTz31HZx2nX7UAZPOUe48Fpap_95shxvXdq2Xth5HGLwq7
+    command:
+      - http
+      # host.docker.internal apunta a tu maquina Windows (host) Cambia 8080 por el puerto donde corre tu aplicacion
+      - host.docker.internal:8080
+      # Dominio fijo asignado en tu cuenta ngrok (no cambia entre reinicios). Obtenlo en: https://dashboard.ngrok.com/cloud-edge/domains
+      - --domain=nondeclaratively-unobstructed-marcus.ngrok-free.dev
+      # Le indica a ngrok que reenvie las peticiones como si vinieran de localhost:8080
+      - --host-header=localhost:8080
+      # El modo rewrite, que preserva los headers:
+      - --host-header=rewrite
+    ports:
+      # Mapeo para ver el panel de control de ngrok en tu navegador (localhost:4040)
+      - "4040:4040"
+    # Reinicia el contenedor automaticamente si falla o si reinicias Docker
+    restart: unless-stopped
