@@ -1,15 +1,16 @@
 # ─────────────────────────────────────────────────────────────────
-# Dockerfile raíz — contexto: . (raíz del proyecto)
+# Dockerfile raíz — contexto: /home/richard/www (raíz del proyecto)
 #
 # Imagen única: Node.js 18 + Java 17 + sonar-scanner CLI + git
 # La app (node-pty) ejecuta sonar-scanner como proceso local,
 # por lo que ambos deben coexistir en el mismo contenedor.
 #
-# COPY usa rutas relativas a la raíz porque el contexto es "."
+# COPY usa rutas relativas al build context (/home/richard/www)
 # ─────────────────────────────────────────────────────────────────
 FROM node:18-bookworm-slim
 
-WORKDIR /app
+# WORKDIR define el directorio base para RUN, destinos relativos de COPY/ADD y CMD/ENTRYPOINT.
+WORKDIR /www/sonar_project
 
 # ── Dependencias de sistema + sonar-scanner CLI ─────────────────
 # python3/make/g++ → compilación de módulos nativos (node-pty)
@@ -36,11 +37,14 @@ ENV SONAR_SCANNER_OPTS="-server"
 ENV JAVA_HOME="/usr/lib/jvm/java-17-openjdk-amd64"
 
 # ── Dependencias Node.js ─────────────────────────────────────────
-# COPY desde sonar_project/ porque el contexto es la raíz del proyecto.
+# COPY: ruta relativa al context (/home/richard/www) → ruta relativa al WORKDIR (/www/sonar_project)
+
 # Se copia scripts/ antes de npm ci porque el postinstall
 # ejecuta scripts/copy-vendor.js (copia assets de node_modules).
-COPY sonar_project/package*.json ./
+COPY sonar_project/package*.json ./ 
 COPY sonar_project/scripts/ ./scripts/
+# Instala dependencias exactas desde package-lock.json
+# omite las de desarrollo y limpia la caché para reducir la imagen.
 RUN npm ci --omit=dev && npm cache clean --force
 
 # ── Código de la app ─────────────────────────────────────────────
@@ -48,9 +52,9 @@ COPY sonar_project/ .
 
 # Carpetas de escritura en runtime
 # uploads debe existir pero vacío en la imagen final
-RUN rm -rf /app/uploads \
-  && mkdir -p /app/logs /app/uploads \
-  && chown -R node:node /app
+RUN rm -rf /www/sonar_project/uploads \
+  && mkdir -p /www/sonar_project/logs /www/sonar_project/uploads \
+  && chown -R node:node /www
 
 ENV NODE_ENV=production
 ENV PORT=3000

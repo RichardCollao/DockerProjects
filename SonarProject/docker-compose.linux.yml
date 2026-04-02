@@ -14,9 +14,11 @@ services:
       - sonar_net
 
   app:
+    # image: richardcollao/sonar-app:1.0.1
     build:
-      context: .             # raíz del proyecto
-      dockerfile: Dockerfile # Dockerfile raíz (incluye www/ completo)
+      # context: Define la ruta raíz desde donde Docker busca archivos para COPY en el Dockerfile
+      context: /home/richard/www            # ruta absoluta (o usar . para ruta relativa)
+      dockerfile: DockerProjects/SonarProject/Dockerfile # ruta relativa al build context
     container_name: sonar_app
     depends_on:
       - sonarqube
@@ -25,9 +27,6 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3000
-    volumes:
-    # Importante: Reemplazar /home/richard/www por la ruta local donde tiene sus proyectos antes de iniciar el contenedor.
-      - /home/richard/www:/workspace
     networks:
       - sonar_net
 
