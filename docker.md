@@ -1,119 +1,156 @@
-Crea un contenedor a partir de una imagen, pero no lo inicia automáticamente
-```html
+# Docker - guía rápida
+
+## Contenedores
+
+Crear un contenedor sin iniciarlo:
+```bash
 docker create --name mi_nginx -p 8080:80 nginx:latest
 ```
-Crea y/o ejecuta un contenedor a partir de una imagen.
-```html
-docker run <opciones> <nombre_imagen>
+
+Crear e iniciar un contenedor:
+```bash
+docker run <opciones> <imagen>
 ```
-Lista los contenedores en ejecución.
-```html
+
+Listar contenedores en ejecución:
+```bash
 docker ps
 ```
-Lista todos los contenedores aunque no esten en ejecución.
-```html
+
+Listar todos los contenedores (incluye detenidos):
+```bash
 docker ps -a
 ```
-Detiene un contenedor en ejecución.
-```html
-docker stop <nombre_contenedor>
+
+Detener un contenedor:
+```bash
+docker stop <contenedor>
 ```
-Inicia un contenedor detenido.
-```html
-docker start <nombre_contenedor>
+
+Iniciar un contenedor detenido:
+```bash
+docker start <contenedor>
 ```
-Reinicia un contenedor.
-```html
-docker restart <nombre_contenedor>
+
+Reiniciar un contenedor:
+```bash
+docker restart <contenedor>
 ```
-Elimina un contenedor.
-```html
-docker rm <nombre_contenedor>
+
+Eliminar un contenedor:
+```bash
+docker rm <contenedor>
 ```
-Lista las imágenes de Docker disponibles localmente.
-```html
-docker images
+
+Ejecutar un comando dentro de un contenedor en ejecución:
+```bash
+docker exec -it <contenedor> bash
 ```
-Descarga una imagen desde un registro (como Docker Hub).
-```html
-docker pull <nombre_imagen>
+
+Ver logs de un contenedor:
+```bash
+docker logs <contenedor>
 ```
-Para una arquitectura específica
-Descarga una imagen desde un registro (como Docker Hub). docker pull <nombre_imagen>
-```html
-docker pull --platform linux/arm64 ubuntu:latest
-```
-Construye una imagen a partir de un Dockerfile.  docker build <opciones> <ruta_dockerfile>
-```html
-docker build -t mi_app_python
-```
-```html
-docker build -f ruta/al/miDockerfile -t mi_app .
-```
-Sube una imagen a un registro.
-```html
-docker push <nombre_imagen>
-```
-Lista los nombres de todos los contenedores activos en Docker
-```html
+
+Listar solo nombres de contenedores en ejecución:
+```bash
 docker ps --format "{{.Names}}"
 ```
-Ejecuta un comando dentro de un contenedor en ejecución. docker exec <opciones> <nombre_contenedor> <comando>
-```html
-docker exec -it sonarqube bash
+
+## Imágenes
+
+Listar imágenes locales:
+```bash
+docker images
 ```
-Muestra los registros (logs) de un contenedor.
-```html
-docker logs <nombre_contenedor>
+
+Descargar una imagen:
+```bash
+docker pull <imagen>
 ```
-Crea e inicia los servicios definidos en un archivo docker-compose.yml.
-```html
+
+Descargar imagen para arquitectura específica:
+```bash
+docker pull --platform linux/arm64 ubuntu:latest
+```
+
+Construir una imagen desde Dockerfile (directorio actual):
+```bash
+docker build -t mi_app_python .
+```
+
+Construir usando un Dockerfile específico:
+```bash
+docker build -f ruta/al/Dockerfile -t mi_app .
+```
+
+Subir imagen a un registry:
+```bash
+docker push <imagen>
+```
+
+## Docker Compose
+
+Crear e iniciar servicios:
+```bash
 docker compose up
 ```
-```html
+
+Crear e iniciar en segundo plano, recreando contenedores:
+```bash
 docker compose up -d --force-recreate
 ```
-Detiene y elimina los contenedores, redes y volúmenes definidos en un archivo docker-compose.yml.
-```html
+
+Detener y eliminar contenedores y redes del compose:
+```bash
 docker compose down
 ```
 
-Mostrará una lista de todos los volúmenes, estén o no en uso.
-```html
+## Volúmenes
+
+Listar volúmenes:
+```bash
 docker volume ls
 ```
-Ver los detalles de un volumen específico
-```html
-docker volume inspect NOMBRE_DEL_VOLUMEN
+
+Ver detalle de un volumen:
+```bash
+docker volume inspect <volumen>
 ```
-Listar solo los volúmenes que NO están en uso
-```html
+
+Listar volúmenes no utilizados:
+```bash
 docker volume ls -qf dangling=true
 ```
-Eliminar los volúmenes que no están en uso
-```html
+
+Eliminar volúmenes no utilizados:
+```bash
 docker volume prune
 ```
-Elimina todos los volúmenes
-```html
-docker volume rm $(docker volume ls -q) 
+
+Eliminar todos los volúmenes:
+```bash
+docker volume rm $(docker volume ls -q)
 ```
 
+## Publicar imagen en Docker Hub
 
-PUBLICAR IMAGEN
-Login en Docker Hub, Si tienes 2FA, usa un Access Token como contraseña.
-```html
-docker login -u richardcollao
+Login (si tienes 2FA, usar Access Token como contraseña):
+```bash
+docker login -u richardcollao
 ```
-Construir imagen
-```html
-docker build -t richardcollao/sonar-app:1.0.0 /home/richard/Docker/SonarProject
+
+Construir imagen:
+```bash
+docker build -t richardcollao/sonar-app:1.0.0 /home/richard/Docker/SonarProject
 ```
-Subir imagen
-```html
-docker push richardcollao/sonar-app:1.0.0
+
+Subir imagen:
+```bash
+docker push richardcollao/sonar-app:1.0.0
 ```
-Verificar que existe en Docker Hub
+
+Verificar en Docker Hub que la imagen existe.
 
 
 
