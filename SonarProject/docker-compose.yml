@@ -1,0 +1,83 @@
+services:
+
+  # ─────────────────────────────────────────────
+  # SONARQUBE
+  # ─────────────────────────────────────────────
+  sonarqube:
+    image: sonarqube:latest
+    container_name: sonarqube
+    ports:
+      - "9000:9000"
+    volumes:
+      # Linux/macOS (volúmenes nombrados, recomendado):
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_logs:/opt/sonarqube/logs
+      # Windows (bind mounts locales en PowerShell/CMD):
+      # - C:/sonarqube/data:/opt/sonarqube/data
+      # - C:/sonarqube/logs:/opt/sonarqube/logs
+      # Windows (alternativa estilo Git Bash/WSL):
+      # - /c/sonarqube/data:/opt/sonarqube/data
+      # - /c/sonarqube/logs:/opt/sonarqube/logs
+    networks:
+      - sonar_net
+
+  # ─────────────────────────────────────────────
+  # APP  (Node.js + sonar-scanner + Java + git)
+  #   Una sola imagen: la app llama a sonar-scanner
+  #   como proceso local via node-pty (mismo contenedor).
+  #
+  #   Build local:  docker build -t tuusuario/sonar-app:1.0.0 .
+  #   Push:         docker push tuusuario/sonar-app:1.0.0
+  # ─────────────────────────────────────────────
+  app:
+    # image: richardcollao/sonar-app:1.0.1
+    build:
+      context: .             # raíz del proyecto
+      dockerfile: Dockerfile # Dockerfile raíz (incluye www/ completo)
+    container_name: sonar_app
+    depends_on:
+      - sonarqube
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    volumes:
+      # IMPORTANTE: cada usuario debe reemplazar /home/richard/www por su ruta que contenga todos los proyectos
+      # por su directorio local antes de levantar el contenedor.
+      - /home/richard/www:/workspace
+      # Ejemplo ruta en windows
+      # - C:\Users\Richard\www:/workspace
+    networks:
+      - sonar_net
+
+    # =========================
+    # COMANDOS UTILES
+    # =========================
+
+    # Levantar servicios:
+    # docker compose up -d --build
+
+    # Ver logs:
+    # docker compose logs -f app
+    # docker compose logs -f sonarqube
+
+    # Entrar al contenedor:
+    # docker exec -it sonar_app bash
+
+    # Verificar sonar-scanner disponible:
+    # sonar-scanner --version
+
+    # Acceso web app:
+    # http://localhost:3000
+
+    # Acceso SonarQube:
+    # http://localhost:9000  (admin/admin)
+
+networks:
+  sonar_net:
+    driver: bridge
+
+volumes:
+  sonarqube_data:
+  sonarqube_logs:
