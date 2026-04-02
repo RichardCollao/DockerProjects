@@ -18,22 +18,20 @@ services:
       # Windows (alternativa estilo Git Bash/WSL):
       # - /c/sonarqube/data:/opt/sonarqube/data
       # - /c/sonarqube/logs:/opt/sonarqube/logs
+      # Misma carpeta del proyecto (menos recomendado, pero funciona en todos los OS):
+      # - ./sonarqube/data:/opt/sonarqube/data
+      # - ./sonarqube/logs:/opt/sonarqube/logs
     networks:
       - sonar_net
 
   # ─────────────────────────────────────────────
   # APP  (Node.js + sonar-scanner + Java + git)
-  #   Una sola imagen: la app llama a sonar-scanner
-  #   como proceso local via node-pty (mismo contenedor).
-  #
-  #   Build local:  docker build -t tuusuario/sonar-app:1.0.0 .
-  #   Push:         docker push tuusuario/sonar-app:1.0.0
   # ─────────────────────────────────────────────
   app:
-    # image: richardcollao/sonar-app:1.0.1
-    build:
-      context: .             # raíz del proyecto
-      dockerfile: Dockerfile # Dockerfile raíz (incluye www/ completo)
+    image: richardcollao/sonar-app:1.0.0
+    # build:
+    #   context: .             # raíz del proyecto
+    #   dockerfile: Dockerfile # Dockerfile raíz (incluye www/ completo)
     container_name: sonar_app
     depends_on:
       - sonarqube
@@ -48,19 +46,13 @@ services:
       - /home/richard/www:/workspace
       # Ejemplo ruta en windows
       # - C:\Users\Richard\www:/workspace
+      # - "C:/www:/workspace"
     networks:
       - sonar_net
 
     # =========================
     # COMANDOS UTILES
     # =========================
-
-    # Levantar servicios:
-    # docker compose up -d --build
-
-    # Ver logs:
-    # docker compose logs -f app
-    # docker compose logs -f sonarqube
 
     # Entrar al contenedor:
     # docker exec -it sonar_app bash
