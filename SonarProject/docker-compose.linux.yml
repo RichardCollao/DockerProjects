@@ -17,7 +17,7 @@ services:
     # image: richardcollao/sonar-app:1.0.1
     build:
       # context: Define la ruta raíz desde donde Docker busca archivos para COPY en el Dockerfile
-      context: /home/richard/www            # ruta absoluta (o usar . para ruta relativa)
+      context: /home/richard/www            # ruta absoluta válida en Linux
       dockerfile: DockerProjects/SonarProject/Dockerfile # ruta relativa al build context
     container_name: sonar_app
     depends_on:
@@ -27,6 +27,10 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3000
+    volumes:
+      # Necesario para que el explorador de archivos (BASE_DIR=/workspace)
+      # pueda listar carpetas del host sin devolver HTTP 500.
+      - /home/richard/www:/workspace
     networks:
       - sonar_net
 

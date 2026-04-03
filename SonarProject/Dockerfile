@@ -51,9 +51,7 @@ RUN npm ci --omit=dev && npm cache clean --force
 COPY sonar_project/ .
 
 # Carpetas de escritura en runtime
-# uploads debe existir pero vacío en la imagen final
-RUN rm -rf /www/sonar_project/uploads \
-  && mkdir -p /www/sonar_project/logs /www/sonar_project/uploads \
+RUN mkdir -p /www/sonar_project/logs \
   && chown -R node:node /www
 
 ENV NODE_ENV=production
