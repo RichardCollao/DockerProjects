@@ -3,7 +3,7 @@
 
 services:
   sonarqube:
-    image: sonarqube:latest
+    image: sonarqube:26.3.0.120487-community
     container_name: sonarqube
     ports:
       - "9000:9000"
@@ -33,6 +33,18 @@ services:
       - /home/richard/www:/workspace
     networks:
       - sonar_net
+
+  gitleaks:
+    image: zricethezav/gitleaks:v8.30.1
+    container_name: gitleaks
+    working_dir: /workspace
+    entrypoint: ["tail", "-f", "/dev/null"]
+    volumes:
+      - /home/richard/www:/workspace
+    networks:
+      - sonar_net
+
+  # Semgrep
 
 networks:
   sonar_net:
